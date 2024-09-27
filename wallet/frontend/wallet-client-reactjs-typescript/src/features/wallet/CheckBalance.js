@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { checkBalance } from './api';
 import Swal from 'sweetalert2';
-import './assets/css/CheckBalance.css'; // Asegúrate de crear este archivo para los estilos
+import './assets/css/CheckBalance.css';
 
 const CheckBalance = () => {
     const [formData, setFormData] = useState({
@@ -22,14 +22,35 @@ const CheckBalance = () => {
         e.preventDefault();
         try {
             const response = await checkBalance(formData);
-            setBalance(response.data.balance);
-            Swal.fire({
-                title: 'Balance Retrieved!',
-                text: `Your balance is: ${response.data.balance}`,
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
+            const retrievedBalance = response.data.balance;
+            console.log(response.data.balance)
+            if(response.status === 200) {
+                if(retrievedBalance.message) {
+                    Swal.fire({
+                        title: 'Insuficiente',
+                        text: `Tu balance es: ${retrievedBalance.message}`,
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+
+                    // Asegúrate de que el balance sea un número o cadena
+                    if (typeof retrievedBalance === 'number' || typeof retrievedBalance === 'string') {
+                        setBalance(retrievedBalance);
+                        Swal.fire({
+                            title: 'Balance Retrieved!',
+                            text: `Tu balance es: ${retrievedBalance}`,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        throw new Error('Invalid balance format');
+                    }
+                }
+
+            }
         } catch (error) {
+            console.error(error);
             const errorMessage = error.response?.data?.message || 'Error al consultar el saldo';
             Swal.fire({
                 title: 'Error!',
@@ -59,7 +80,11 @@ const CheckBalance = () => {
                     required
                 />
                 <button type="submit" className="check-button">Check Balance</button>
-                {balance !== null && <p className="balance-info">Your balance is: <strong>{balance}</strong></p>}
+                {balance !== null && (
+                    <p className="balance-info">
+                        Your balance is: <strong>{String(balance)}</strong>
+                    </p>
+                )}
             </form>
         </div>
     );

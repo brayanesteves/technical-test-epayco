@@ -125,8 +125,7 @@ export class WalletService {
 
     async pay(document: string, amount: number): Promise<{ sessionId: string; message: string }> {
         const wallet = await this.walletRepository.findByDocument(document);
-        if (!wallet || wallet.balance < amount) throw new Error(this.messages.insufficientBalance);
-    
+        if (Math.floor(amount) > Math.floor(wallet.balance)) throw new Error(this.messages.insufficientBalance);
         // Verificar si el usuario necesita esperar 30 minutos
         const userStatus = this.sessionTokens.get(document);
         if (userStatus && userStatus.attempts >= 3) {
@@ -208,6 +207,7 @@ export class WalletService {
         }
     
         // Verificar si el monto coincide con el monto almacenado
+        console.log(storedData.amount)
         if (storedData.amount !== amount) {
             storedData.attempts += 1; // Incrementar contador de intentos
             throw new Error('El monto no es igual al monto del pago que quieres confirmar.');
@@ -220,15 +220,16 @@ export class WalletService {
         }
     
         // Verificar si la billetera tiene suficiente saldo
-        if (wallet.balance < amount) {
-            throw new Error('Insufficient funds');
+        if (Math.floor(wallet.balance) < Math.floor(amount)) {
+            throw new Error('Fondos insuficientes.');
         }
     
         // Descontar el monto de la billetera
-        wallet.balance -= amount;
+        let descontar = Math.floor(wallet.balance);
+        descontar -= Math.floor(amount);
     
         // Actualizar el balance en la base de datos
-        await this.walletRepository.updateBalance(wallet.document, wallet.balance);
+        await this.walletRepository.updateBalance(wallet.document, descontar);
         
         // Limpiar el token de la memoria después de su uso
         this.sessionTokens.delete(sessionId);
@@ -261,7 +262,6 @@ export class WalletService {
                 // Si existe, usa el prefijo que tiene en la base de datos
                 normalizedPhone = existingWallet.phone; // Se agrega el prefijo que ya tiene en la base de datos
             } else {
-                console.log("ACAa");
                 throw new Error(this.messages.invalidCredentials);
             }
         }
