@@ -64,9 +64,9 @@ export class WalletService {
     async loadWallet(document: string, phone: string, amount: number): Promise<{ message: { document: string; previousBalance: number; currentBalance: number } }> {
         const wallet = await this.walletRepository.findByDocument(document);
         
-        // Verificar si la billetera existe y si el teléfono coincide
-        if (!wallet || wallet.phone !== phone) {
-            throw new Error(this.messages.invalidCredentials);
+        // Verificar si la billetera existe
+        if (!wallet) {
+            throw new Error('El número de documento no existe.');
         }
     
         // Almacenar el balance anterior
@@ -76,6 +76,36 @@ export class WalletService {
         const amountToAdd = Math.floor(amount);
         if (amountToAdd <= 0) {
             throw new Error('El monto a cargar debe ser un número positivo.');
+        }
+    
+        // Normalizar el número de teléfono
+        let normalizedPhone = phone;
+    
+        // Comprobar si el teléfono tiene un prefijo válido
+        const validPrefixes = ['+57', '+58']; // Agrega más prefijos si es necesario
+        const hasValidPrefix = validPrefixes.some(prefix => wallet.phone.startsWith(prefix));
+    
+        if (!hasValidPrefix) {
+            // Buscar el número sin prefijo en la base de datos
+            const phoneWithoutPrefix = normalizedPhone; // Mantener el número original
+            const existingWallet = await this.walletRepository.findByPhone(phoneWithoutPrefix);
+    
+            if (existingWallet) {
+                // Si existe, usa el prefijo que tiene en la base de datos
+                normalizedPhone = existingWallet.phone; // Se agrega el prefijo que ya tiene en la base de datos
+            } else {
+                console.log("ACAa");
+                throw new Error(this.messages.invalidCredentials);
+            }
+        }
+    
+        // Quitar prefijos de wallet.phone para la comparación
+        const walletPhoneWithoutPrefix = wallet.phone.replace(/^\+57|^\+58/, '');
+    
+        // Verificar si el teléfono normalizado coincide
+        if (walletPhoneWithoutPrefix !== normalizedPhone.replace(/^\+57|^\+58/, '')) {
+            console.log("ACA", walletPhoneWithoutPrefix, normalizedPhone);
+            throw new Error(this.messages.invalidCredentials);
         }
     
         // Aumentar el balance
@@ -210,12 +240,44 @@ export class WalletService {
     // Consulta de saldo de la billetera
     async checkBalance(document: string, phone: string): Promise<number | { message: string }> {
         const wallet = await this.walletRepository.findByDocument(document);
-        if (!wallet || wallet.phone !== phone) {
+        
+        // Verificar si la billetera existe
+        if (!wallet) {
             throw new Error(this.messages.invalidCredentials);
         }
-        
-        const balance = Math.floor(wallet.balance);
     
+        // Normalizar el número de teléfono
+        let normalizedPhone = phone;
+    
+        // Comprobar si el teléfono tiene un prefijo válido
+        const validPrefixes = ['+57', '+58']; // Agrega más prefijos si es necesario
+        const hasValidPrefix = validPrefixes.some(prefix => wallet.phone.startsWith(prefix));
+    
+        if (!hasValidPrefix) {
+            // Buscar el número sin prefijo en la base de datos
+            const phoneWithoutPrefix = normalizedPhone; // Mantener el número original
+            const existingWallet = await this.walletRepository.findByPhone(phoneWithoutPrefix);
+    
+            if (existingWallet) {
+                // Si existe, usa el prefijo que tiene en la base de datos
+                normalizedPhone = existingWallet.phone; // Se agrega el prefijo que ya tiene en la base de datos
+            } else {
+                console.log("ACAa");
+                throw new Error(this.messages.invalidCredentials);
+            }
+        }
+    
+        // Quitar prefijos de wallet.phone para la comparación
+        const walletPhoneWithoutPrefix = wallet.phone.replace(/^\+57|^\+58/, '');
+    
+        // Verificar si el teléfono normalizado coincide
+        if (walletPhoneWithoutPrefix !== normalizedPhone.replace(/^\+57|^\+58/, '')) {
+            console.log("ACA", walletPhoneWithoutPrefix, normalizedPhone);
+            throw new Error(this.messages.invalidCredentials);
+        }
+    
+        const balance = Math.floor(wallet.balance);
+        
         // Comprobar si el balance es 0
         if (balance === 0) {
             return { message: 'Fondo insuficiente' }; // Mensaje en caso de saldo insuficiente

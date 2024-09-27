@@ -37,4 +37,16 @@ export class WalletRepositoryMySQL implements WalletRepository {
 
         return null; // Retorna null si no se encuentra el usuario
     }
+
+    async findByPhone(phone: string): Promise<Wallet | null> {
+        const query = 'SELECT * FROM wallets WHERE phone = ?';
+        const [rows] = await db.execute(query, [phone]);
+    
+        if (Array.isArray(rows) && rows.length > 0) {
+            const row = rows[0];
+            return new Wallet(row.document, row.name, row.email, row.phone, row.balance);
+        }
+    
+        return null; // Retorna null si no se encuentra el usuario
+    }
 }

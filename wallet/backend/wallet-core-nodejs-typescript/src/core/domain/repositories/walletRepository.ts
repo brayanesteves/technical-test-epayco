@@ -5,4 +5,5 @@ export interface WalletRepository {
     updateBalance(document: string, newBalance: number): Promise<void>;
     findByDocument(document: string): Promise<Wallet | null>;
     findByEmail(email: string): Promise<Wallet | null>;
+    findByPhone(phone: string): Promise<Wallet | null>;
 }
