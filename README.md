@@ -73,15 +73,9 @@ wallet/
 
 ## Contribuciones
 
-Si deseas contribuir a este proyecto, no dudes en abrir un issue o enviar un pull request.
+
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archivo LICENSE en el repositorio.
+
 ```
-
-### Notas
-
-- Asegúrate de que el archivo `README.md` esté bien formateado en tu repositorio.
-- Personaliza el contenido según sea necesario para que se ajuste a los detalles de tu proyecto.
-- Incluye cualquier otra información relevante que desees que los usuarios conozcan.
