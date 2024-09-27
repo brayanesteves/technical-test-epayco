@@ -1,0 +1,56 @@
+.check-balance-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+}
+
+.check-balance-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.check-balance-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.check-balance-form input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.check-balance-form input:focus {
+    border-color: #4CAF50; /* Color de borde al enfocar */
+    outline: none;
+}
+
+.check-button {
+    padding: 10px;
+    background-color: #4CAF50; /* Color de fondo del botón */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.check-button:hover {
+    background-color: #45a049; /* Color de fondo al pasar el mouse */
+    transform: translateY(-2px); /* Efecto de elevación */
+}
+
+.balance-info {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}

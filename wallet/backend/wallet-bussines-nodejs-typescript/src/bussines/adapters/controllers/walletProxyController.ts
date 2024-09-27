@@ -22,6 +22,7 @@ export const registerUserProxy = async (req: Request, res: Response) => {
 // Recargar billetera
 export const loadWalletProxy = async (req: Request, res: Response) => {
     try {
+        console.log("ACA")
         const response = await axios.post(`${service1BaseURL}/wallet/load`, req.body);
         res.status(response.status).json(response.data);
     } catch (error) {

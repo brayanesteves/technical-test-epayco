@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors'; // Importar cors
 import { 
     registerUserProxy, 
     loadWalletProxy, 
@@ -9,6 +10,14 @@ import {
 import { setupSwagger } from '../config/swagger';
 
 const app = express();
+// Configuración de CORS
+const corsOptions = {
+    origin: 'http://localhost:3001', // Tu frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+};
+
+app.use(cors(corsOptions)); // Habilitar CORS
 app.use(express.json());
 
 /**

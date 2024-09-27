@@ -94,8 +94,7 @@ export class WalletService {
                 // Si existe, usa el prefijo que tiene en la base de datos
                 normalizedPhone = existingWallet.phone; // Se agrega el prefijo que ya tiene en la base de datos
             } else {
-                console.log("ACAa");
-                throw new Error(this.messages.invalidCredentials);
+                throw new Error(this.messages.invalidCredentials + "aaa");
             }
         }
     
